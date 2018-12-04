@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 
+'''
+  This is a sketch for the future. Currently c2goasm does not support ARM64 so this is useless.
+'''
+
 from common import *
 
-mainArch = "amd64"
+mainArch = "arm64"
 
 outputFolder = "../%s" %mainArch
 
 subarchs = [
   {
-    "name": "avx",
-    "subarchtitle": "AVX",
-    "flags": "-mavx -mfma"
-  },
-  {
-    "name": "sse2",
-    "subarchtitle": "SSE2",
-    "flags": "-msse2"
+    "name": "neon",
+    "subarchtitle": "Neon",
+    "flags": "-funsafe-math-optimizations -ftree-vectorize"
   }
 ]
 
@@ -41,6 +40,10 @@ sources = [
     "cFunction": "dotProductFloat",
   }
 ]
+
+print "ARM64 support is still lacking at c2goasm. This won't work"
+
+exit(1)
 
 initFolders(mainArch)
 
