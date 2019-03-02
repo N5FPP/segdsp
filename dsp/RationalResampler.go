@@ -17,6 +17,15 @@ func (f *RationalResampler) Work(data []complex64) []complex64 {
 	return f.decimator.Work(interpolated)
 }
 
+func (f *RationalResampler) WorkBuffer(input, output []complex64) int {
+	tmp := f.interpolator.Work(input)
+	return f.decimator.WorkBuffer(tmp, output)
+}
+
+func (f *RationalResampler) PredictOutputSize(inputLength int) int {
+	return f.decimator.PredictOutputSize(f.interpolator.PredictOutputSize(inputLength))
+}
+
 type FloatRationalResampler struct {
 	decimator    *FloatDecimator
 	interpolator *FloatInterpolator
@@ -32,4 +41,13 @@ func MakeFloatRationalResampler(interpolationRatio, decimationRatio int) *FloatR
 func (f *FloatRationalResampler) Work(data []float32) []float32 {
 	var interpolated = f.interpolator.Work(data)
 	return f.decimator.Work(interpolated)
+}
+
+func (f *FloatRationalResampler) WorkBuffer(input, output []float32) int {
+	tmp := f.interpolator.Work(input)
+	return f.decimator.WorkBuffer(tmp, output)
+}
+
+func (f *FloatRationalResampler) PredictOutputSize(inputLength int) int {
+	return f.decimator.PredictOutputSize(f.interpolator.PredictOutputSize(inputLength))
 }

@@ -40,9 +40,21 @@ func (r *Rotator) Rotate(d complex64) complex64 {
 
 func (r *Rotator) Work(data []complex64) []complex64 {
 	return RotateComplex(data, &r.lastPhase, r.phaseIncrement, len(data))
-	//var out = make([]complex64, len(data))
-	//for i := 0; i < len(data); i++ {
-	//	out[i] = r.rotate(data[i])
-	//}
-	//return out
+}
+
+func (r *Rotator) WorkBuffer(input, output []complex64) int {
+	if len(output) < len(input) {
+		panic("There is not enough space in output buffer")
+	}
+	return RotateComplexBuffer(input, output, &r.lastPhase, r.phaseIncrement, len(input))
+}
+
+func (r *Rotator) WorkInline(data []complex64) {
+	for i := 0; i < len(data); i++ {
+		data[i] = r.Rotate(data[i])
+	}
+}
+
+func (r *Rotator) PredictOutputSize(inputLength int) int {
+	return inputLength
 }

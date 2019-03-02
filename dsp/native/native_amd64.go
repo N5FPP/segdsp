@@ -8,6 +8,9 @@ var nativeDotProductComplexComplex func(input []complex64, taps []complex64) com
 var nativeMultiplyConjugate func(vecA, vecB []complex64, length int) []complex64
 var nativeMultiplyConjugateInline func(vecA, vecB []complex64, length int)
 var nativeComplexRotate func(input []complex64, phase *complex64, phaseIncrement complex64, length int) []complex64
+var nativeComplexBufferRotate func(input, output []complex64, phase *complex64, phaseIncrement complex64, length int) int
+var nativeFirFilter func(input []complex64, output []complex64, taps []float32)
+var nativeFirFilterDecimate func(decimation uint, input []complex64, output []complex64, taps []float32)
 
 func RotateComplex(input []complex64, phase *complex64, phaseIncrement complex64, length int) []complex64 {
 	if nativeComplexRotate == nil {
@@ -18,6 +21,17 @@ func RotateComplex(input []complex64, phase *complex64, phaseIncrement complex64
 		panic("No native function available for arch")
 	}
 	return nativeComplexRotate(input, phase, phaseIncrement, length)
+}
+
+func RotateComplexBuffer(input, output []complex64, phase *complex64, phaseIncrement complex64, length int) int {
+	if nativeComplexBufferRotate == nil {
+		nativeComplexBufferRotate = GetRotateComplexBuffer()
+	}
+
+	if nativeComplexBufferRotate == nil {
+		panic("No native function available for arch")
+	}
+	return nativeComplexBufferRotate(input, output, phase, phaseIncrement, length)
 }
 
 func DotProductComplex(input []complex64, taps []float32) complex64 {
@@ -73,6 +87,28 @@ func MultiplyConjugateInline(vecA, vecB []complex64, length int) {
 		panic("No native function available for arch")
 	}
 	nativeMultiplyConjugateInline(vecA, vecB, length)
+}
+
+func FirFilter(input []complex64, output []complex64, taps []float32) {
+	if nativeFirFilter == nil {
+		nativeFirFilter = GetFirFilter()
+	}
+
+	if nativeFirFilter == nil {
+		panic("No native function available for arch")
+	}
+	nativeFirFilter(input, output, taps)
+}
+
+func FirFilterDecimate(decimation uint, input []complex64, output []complex64, taps []float32) {
+	if nativeFirFilterDecimate == nil {
+		nativeFirFilterDecimate = GetFirFilterDecimate()
+	}
+
+	if nativeFirFilterDecimate == nil {
+		panic("No native function available for arch")
+	}
+	nativeFirFilterDecimate(decimation, input, output, taps)
 }
 
 func GetNativeDotProductComplex() func(input []complex64, taps []float32) complex64 {
@@ -142,6 +178,42 @@ func GetRotateComplex() func(input []complex64, phase *complex64, phaseIncrement
 
 	if amd64.SSE2 {
 		return amd64.RotateComplexSSE2
+	}
+
+	return nil
+}
+
+func GetRotateComplexBuffer() func(input, output []complex64, phase *complex64, phaseIncrement complex64, length int) int {
+	if amd64.AVX {
+		return amd64.RotateComplexBufferAVX
+	}
+
+	if amd64.SSE2 {
+		return amd64.RotateComplexBufferSSE2
+	}
+
+	return nil
+}
+
+func GetFirFilter() func(input []complex64, output []complex64, taps []float32) {
+	if amd64.AVX {
+		return amd64.FirFilterAVX
+	}
+
+	if amd64.SSE2 {
+		return amd64.FirFilterSSE2
+	}
+
+	return nil
+}
+
+func GetFirFilterDecimate() func(decimation uint, input []complex64, output []complex64, taps []float32) {
+	if amd64.AVX {
+		return amd64.FirFilterDecimateAVX
+	}
+
+	if amd64.SSE2 {
+		return amd64.FirFilterDecimateSSE2
 	}
 
 	return nil

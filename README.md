@@ -16,6 +16,10 @@ All `master` branch builds is uploaded to dockerhub with the name `racerxdl/segd
 
 Please check the [Releases](https://github.com/racerxdl/segdsp/releases) for binary releases.
 
+## Nice Sample using SegDSP as a Library
+
+Here is a nice sample using segdsp as a library: https://github.com/racerxdl/segdsp-sample
+
 ## Running
 
 SegDSP is pretty straightforward to run if you know what you want to capture. It accepts both Environment Variables (suitable for docker containers) or just normal command line arguments.
@@ -63,7 +67,7 @@ CENTER_FREQUENCY="145570000" DEMOD_MODE="FM" FM_DEVIATION="5000" FS_BANDWIDTH="1
 | `-outputRate`         | `OUTPUT_RATE`           | number |                  | Output Rate in Hz                                                 | 48000           |
 | `-record`             | `RECORD`                |  bool  | `true`, `false`  | If it should record output when not squelched                     | false           |
 | `-recordMethod`       | `RECORD_METHOD`         | string | `file`           | Method to use when recording                                      | file            |
-| `-spyserver`          | `SPYSERVER`             | string |                  | SpyServer Address                                                 | localhost:5555  |
+| `-radioserver`        | `RADIOSERVER`           | string |                  | radioserver Address                                                 | localhost:5555  |
 | `-stationName`        | `STATION_NAME`          | string |                  | Name of the Station                                               | SegDSP          |
 
 ## Git Hooks
